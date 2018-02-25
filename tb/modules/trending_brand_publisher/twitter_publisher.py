@@ -4,12 +4,16 @@
     Author: David Cuesta
     Python Version: 3.6
 '''
+########################################################################################################################
+# IMPORTS
+########################################################################################################################
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
 from kafka import SimpleProducer, SimpleClient
 import json
 import os
+########################################################################################################################
 
 
 with open(os.path.expanduser('~/.twitter_credentials.json')) as credentials:

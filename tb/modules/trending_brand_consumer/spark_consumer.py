@@ -30,14 +30,7 @@ import pyhdfs
 ########################################################################################################################
 
 def load_wordlist(filename):
-    """
 
-    :param filename:
-    :return:
-    """
-    """
-    This function returns a list or set of words from the given filename.
-    """
     hdfs = pyhdfs.HdfsClient(hosts='hdfs-namenode:50070')
     words = {}
     f = hdfs.open(filename)
@@ -50,11 +43,7 @@ def load_wordlist(filename):
 
 
 def getSparkSessionInstance(sparkConf):
-    """
 
-    :param sparkConf:
-    :return:
-    """
     if ("sparkSessionSingletonInstance" not in globals()):
         globals()["sparkSessionSingletonInstance"] = SparkSession \
             .builder \
@@ -65,42 +54,40 @@ def getSparkSessionInstance(sparkConf):
 
 
 def write_full_info(time, rdd):
-    """
 
-    :param time:
-    :param rdd:
-    :return:
-    """
     spark = getSparkSessionInstance(rdd.context.getConf())
-    rowRdd = rdd.map(lambda w: Row(tweet=w,fecha=str(datetime.datetime.today())[:-10]))
+    rowRdd = rdd.map(lambda w: Row(tweet=w,dtt=str(datetime.datetime.today())[:-10]))
     schema = StructType([StructField("tweet", StringType(), True)
-                            ,StructField("fecha", StringType(), True)
+                            ,StructField("dtt", StringType(), True)
 
                          ])
     wordsDataFrame = spark.createDataFrame(rowRdd,schema)
     wordsDataFrame.write.parquet(path="hdfs://hdfs-namenode:9000/spark/full" , mode="append", compression=None)
 
 def write_sentiments_by_time(time, rdd):
-    """
 
-    :param time: 
-    :param rdd: 
-    :return: 
-    """
     spark = getSparkSessionInstance(rdd.context.getConf())
-    rowRdd = rdd.map(lambda w: Row(tweet=w, fecha=str(datetime.datetime.today())[:-10]))
+    rowRdd = rdd.map(lambda w: Row(tweet=w, dtt=str(datetime.datetime.today())[:-10]))
     schema = StructType([StructField("tweet", LongType(), True)
-                            , StructField("fecha", StringType(), True)
+                            , StructField("dtt", StringType(), True)
                          ])
 
     wordsDataFrame = spark.createDataFrame(rowRdd, schema)
     wordsDataFrame.write.parquet(path="hdfs://hdfs-namenode:9000/spark/sentiments", mode="append", compression=None)
 
-def create_context():
-    """
+def write_count_by_time(time, rdd):
 
-    :return:
-    """
+    spark = getSparkSessionInstance(rdd.context.getConf())
+    rowRdd = rdd.map(lambda w: Row(tweet=w, dtt=str(datetime.datetime.today())[:-10]))
+    schema = StructType([StructField("tweet", LongType(), True)
+                            , StructField("dtt", StringType(), True)
+                         ])
+
+    wordsDataFrame = spark.createDataFrame(rowRdd, schema)
+    wordsDataFrame.write.parquet(path="hdfs://hdfs-namenode:9000/spark/count", mode="append", compression=None)
+
+def create_context():
+
 
     spark=SparkSession.builder.appName("Streamer").getOrCreate()
     ssc = StreamingContext(spark.sparkContext, 10)
@@ -115,6 +102,7 @@ def create_context():
     negative = words.map(lambda word: ('Sentiment', -1) if word in nwords else ('Sentiment', 0))
 
 
+    count = text.map(lambda word: ('Count', 1) )
 
 
 
@@ -123,12 +111,17 @@ def create_context():
 
 
     sentimentCounts = allSentiments.reduceByKey(lambda x, y: x + y)
-
+    countCounted = count.reduceByKey(lambda x,y: x+y)
 
 
 
     sentimentsMapped = sentimentCounts.map(lambda s : s[1])
     sentimentsMapped.foreachRDD(write_sentiments_by_time)
+
+    countMapped = countCounted.map(lambda c : c[1])
+    countMapped.foreachRDD(write_count_by_time)
+
+
 
     text.foreachRDD(write_full_info)
 
