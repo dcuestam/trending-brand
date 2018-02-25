@@ -46,7 +46,7 @@ def sentiment_query_engine(drill2):
         )],
         'layout': {
             'height': 500,
-            'margin': {'l': 50, 'b': 500, 'r': 500, 't': 50},
+            'margin': {'l': 50, 'b': 80, 'r': 50, 't': 50},
 
             'annotations': [{
                 'x': 0, 'y': 0.70, 'xanchor': 'left', 'yanchor': 'bottom',
@@ -80,7 +80,7 @@ def tweets_per_minute(drill1):
         )],
         'layout': {
             'height': 500,
-            'margin': {'l': 50, 'b': 50, 'r': 50, 't': 50},
+            'margin': {'l': 50, 'b': 80, 'r': 50, 't': 50},
             'annotations': [{
                 'x': 0, 'y': 0.70, 'xanchor': 'left', 'yanchor': 'bottom',
                 'xref': 'paper', 'yref': 'paper', 'showarrow': False,
