@@ -24,7 +24,6 @@ access_token_secret =  twitter_credentials["access_token_secret"]
 consumer_key =  twitter_credentials["consumer_key"]
 consumer_secret =  twitter_credentials["consumer_secret"]
 
-print(consumer_secret)
 class StdOutListener(StreamListener):
     def on_data(self, data):
         producer.send_messages("beer", data.encode('utf-8'))

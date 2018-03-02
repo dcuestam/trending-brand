@@ -29,7 +29,7 @@ def sentiment_query_engine(drill2):
 
     query_info = drill2.query('''
         SELECT SUM(tweet) as s, fecha as f FROM dfs.`spark/sentiments/` WHERE fecha > '2018-02-21 21:54' 
-        GROUP BY fecha ORDER BY fecha DESC LIMIT 10''', timeout= 60)
+        GROUP BY fecha ORDER BY fecha DESC LIMIT 10''', timeout= 120)
     count = []
     dates = []
     for a in query_info:
@@ -46,7 +46,7 @@ def sentiment_query_engine(drill2):
         )],
         'layout': {
             'height': 500,
-            'margin': {'l': 50, 'b': 80, 'r': 50, 't': 50},
+            'margin': {'l': 50, 'b': 100, 'r': 80, 't': 50},
 
             'annotations': [{
                 'x': 0, 'y': 0.70, 'xanchor': 'left', 'yanchor': 'bottom',
@@ -63,7 +63,7 @@ def tweets_per_minute(drill1):
 
     yelp_reviews = drill1.query('''
         SELECT COUNT(tweet) as s, fecha as f FROM dfs.`spark/sentiments/` WHERE fecha > '2018-02-21 21:54'
-         GROUP BY fecha ORDER BY fecha DESC LIMIT 50''', timeout= 60)
+         GROUP BY fecha ORDER BY fecha DESC LIMIT 50''', timeout= 120)
     dates=[]
     count=[]
     for a in yelp_reviews:
@@ -80,7 +80,7 @@ def tweets_per_minute(drill1):
         )],
         'layout': {
             'height': 500,
-            'margin': {'l': 50, 'b': 80, 'r': 50, 't': 50},
+            'margin': {'l': 50, 'b': 150, 'r': 80, 't': 50},
             'annotations': [{
                 'x': 0, 'y': 0.70, 'xanchor': 'left', 'yanchor': 'bottom',
                 'xref': 'paper', 'yref': 'paper', 'showarrow': False,
