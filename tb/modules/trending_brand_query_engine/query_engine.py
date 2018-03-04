@@ -28,8 +28,8 @@ def last_message_form_kafka(consumer):
 def sentiment_query_engine(drill2):
 
     query_info = drill2.query('''
-        SELECT SUM(tweet) as s, fecha as f FROM dfs.`spark/sentiments/` WHERE fecha > '2018-02-21 21:54' 
-        GROUP BY fecha ORDER BY fecha DESC LIMIT 10''', timeout= 120)
+        SELECT SUM(tweet) as s, dtt as f FROM dfs.`spark/sentiments/` 
+        GROUP BY dtt ORDER BY dtt DESC LIMIT 10''', timeout= 120)
     count = []
     dates = []
     for a in query_info:
@@ -62,8 +62,8 @@ def sentiment_query_engine(drill2):
 def tweets_per_minute(drill1):
 
     yelp_reviews = drill1.query('''
-        SELECT COUNT(tweet) as s, fecha as f FROM dfs.`spark/sentiments/` WHERE fecha > '2018-02-21 21:54'
-         GROUP BY fecha ORDER BY fecha DESC LIMIT 50''', timeout= 120)
+        SELECT SUM(tweet) as s, dtt as f FROM dfs.`spark/count/` 
+         GROUP BY dtt ORDER BY dtt DESC LIMIT 50''', timeout= 120)
     dates=[]
     count=[]
     for a in yelp_reviews:
