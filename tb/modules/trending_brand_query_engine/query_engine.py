@@ -1,6 +1,6 @@
 '''
 
-    File name: twitter_publisher.py
+    File name: query_engine.py
     Author: David Cuesta
     Python Version: 3.6
 '''
